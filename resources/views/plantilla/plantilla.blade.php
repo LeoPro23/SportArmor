@@ -7,6 +7,7 @@
 
     <!-- CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     
     <!-- ICONOS / FUENTES-->
 
@@ -49,11 +50,49 @@
         </div>
     </nav>
     
+    <!-- Botón de Chat -->
     <div>
-        <a href="https://whatsapp.com" target="_blank" class="bg-white rounded-full w-12 h-12 flex items-center justify-center focus:ring ring focus:ring-blue-300 fixed bottom-4 right-4 z-40">
-            <i class="fa-brands fa-whatsapp fa-2xl" style="color: #40e02a"></i>
-        </a>
+        <button id="chatButton" class="bg-white rounded-full w-12 h-12 flex items-center justify-center fixed bottom-4 right-4 z-40">
+            <i class="fa-solid fa-comment-dots fa-2xl" style="color: #2a88e0"></i>
+        </button>
     </div>
+
+    <!-- Ventana de Chat -->
+    <div id="chat-container" class="hidden fixed bottom-16 right-4 w-96 z-50">
+        <div class="bg-white shadow-md rounded-lg max-w-lg w-full">
+            <div class="p-4 border-b bg-blue-500 text-white rounded-t-lg flex items-center space-x-3">
+                <!-- Imagen del bot -->
+                <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-8 h-8 rounded-full">
+                <p class="text-lg font-semibold">Sport Armor Bot</p>
+                <button id="close-chat" class="ml-auto text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400 absolute right-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="chatbox" class="p-4 h-80 overflow-y-auto">
+                <!-- Mensajes de chat -->
+                <div class="mb-2 flex items-start space-x-2">
+                    <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
+                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the chatbot.</p>
+                </div>
+                <div class="mb-2 text-right">
+                    <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">Hello</p>
+                </div>
+                <div class="mb-2 flex items-start space-x-2">
+                    <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
+                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is another response from the chatbot.</p>
+                </div>
+            </div>
+            <div class="p-4 border-t flex">
+                <input id="user-input" type="text" placeholder="Escribe un mensaje" class="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="send-button" class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition duration-300">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    
+    @yield('contenido-inicio')
 
     <section id="contenido" class="py-40 transition-colors duration-500 p-10 {{ $sectionClass ?? 'bg-white' }}">
         @yield('contenido')
@@ -85,5 +124,21 @@
             <a href="#" class="font text-black" id="f10">Contacto</a>
         </div>
     </footer>
+
+    <!-- Scripts -->
+    <script>
+        const chatButton = document.getElementById("chatButton");
+        const chatContainer = document.getElementById("chat-container");
+        const closeChat = document.getElementById("close-chat");
+
+        chatButton.addEventListener("click", () => {
+            chatContainer.classList.toggle("hidden");
+        });
+
+        closeChat.addEventListener("click", () => {
+            chatContainer.classList.add("hidden");
+        });
+    </script>
+
 </body>
 </html>

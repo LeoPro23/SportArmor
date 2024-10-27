@@ -6,6 +6,7 @@ use App\Http\Controllers\SubcategoriaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\TallaController;
 use App\Http\Controllers\CuponController;
+use App\Http\Controllers\CatalogoController;
 
 Route::get('/', function () {
     return view('inicio');
@@ -29,3 +30,6 @@ Route::get('tallas/{talla}/confirm', [TallaController::class, 'confirm'])->name(
 
 Route::resource('cupones', CuponController::class);
 Route::get('cupones/{cupon}/confirm', [CuponController::class, 'confirm'])->name('cupones.confirm');
+
+Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
+Route::get('/catalogo/{id}', [CatalogoController::class, 'show'])->name('catalogo.show');

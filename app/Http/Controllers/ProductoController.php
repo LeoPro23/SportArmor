@@ -28,19 +28,26 @@ class ProductoController extends Controller
             'precio' => 'required|numeric',
             'stock' => 'required|integer',
             'subcategoria_id' => 'required|exists:subcategorias,id',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048' // Validación de imagen
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:8192' // Validación de imagen
         ]);
     
+        $datos = $request->all();
+    
         if ($request->hasFile('imagen')) {
-            $imagenNombre = time() . '_' . $request->file('imagen')->getClientOriginalName();
+            // Genera un nombre único para la imagen con timestamp y hash
+            $imagenNombre = time() . '_' . uniqid() . '.' . $request->file('imagen')->getClientOriginalExtension();
+            
+            // Mueve la imagen a la carpeta public/imagenes
             $request->file('imagen')->move(public_path('imagenes'), $imagenNombre);
-            $request->merge(['imagen' => $imagenNombre]);
+            
+            // Agrega el nombre de la imagen al array de datos
+            $datos['imagen'] = $imagenNombre;
         }
     
-        Producto::create($request->all());
-
+        Producto::create($datos);
+    
         return redirect()->route('productos.index')->with('success', 'Producto creado exitosamente.');
-    }
+    }  
     
     public function show($id)
     {
@@ -50,7 +57,9 @@ class ProductoController extends Controller
     public function edit($id)
     {
         $producto = Producto::findOrFail($id);
-        return view('productos.edit', compact('producto'));
+        // Obtiene todas las subcategorías para el select
+        $subcategorias = Subcategoria::get();
+        return view('productos.edit', compact('producto', 'subcategorias'));
     }
 
     public function update(Request $request, $id)
@@ -63,23 +72,32 @@ class ProductoController extends Controller
             'precio' => 'required|numeric',
             'stock' => 'required|integer',
             'subcategoria_id' => 'required|exists:subcategorias,id',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' // Validación de imagen
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:8192' // Validación de imagen
         ]);
+    
+        $datos = $request->all();
     
         if ($request->hasFile('imagen')) {
             // Elimina la imagen anterior si existe
             if ($producto->imagen && file_exists(public_path('imagenes/' . $producto->imagen))) {
                 unlink(public_path('imagenes/' . $producto->imagen));
             }
-            $imagenNombre = time() . '_' . $request->file('imagen')->getClientOriginalName();
+    
+            // Genera un nombre único para la imagen con timestamp y hash
+            $imagenNombre = time() . '_' . uniqid() . '.' . $request->file('imagen')->getClientOriginalExtension();
+            
+            // Mueve la imagen a la carpeta public/imagenes
             $request->file('imagen')->move(public_path('imagenes'), $imagenNombre);
-            $request->merge(['imagen' => $imagenNombre]);
+            
+            // Agrega el nombre de la imagen al array de datos
+            $datos['imagen'] = $imagenNombre;
+        } else {
+            unset($datos['imagen']); // No actualices el campo de imagen si no se ha subido ninguna
         }
     
-        $producto->update($request->all());
+        $producto->update($datos);
         return redirect()->route('productos.index')->with('success', 'Producto actualizado exitosamente.');
-    }
-    
+    }    
 
     public function destroy($id)
     {

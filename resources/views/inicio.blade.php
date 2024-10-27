@@ -1,6 +1,6 @@
 @extends('plantilla.plantilla')
 
-@section('contenido')
+@section('contenido-inicio')
 
 <section id="inicio" class="h-screen bg-[url('{{ asset('imagenes/fondo1.png') }}')] bg-cover pt-28 grid lg:grid-cols-2" style="font-family: 'Orbitron', cursive;">
     <div class="flex justify-center items-center px-20 lg:px-0 lg:pl-20">
