@@ -59,21 +59,65 @@
     <p id="testimonios" class="text-center text-3xl text-white font-bold" style="font-family: 'Orbitron', cursive;">TESTIMONIOS</p>
     <div class="swiper mySwiper1 mt-10">
         <div class="swiper-wrapper">
-            @foreach (['Wuajhon' => 'Wuajhon Zegarra', 'Camilo' => 'Camilo Villaruel', 'Taylor' => 'Taylor Swift', 'Camila' => 'Camila Soriano', 'Eladio' => 'Eladio Carrión'] as $img => $name)
             <div class="swiper-slide relative border-4 rounded-3xl h-80 w-80 bg-white">
                 <div class="absolute top-0 left-1/2 transform -translate-x-1/2 translate-y-3">
-                    <div class="rounded-full border-4 w-40 h-40 bg-blue-700 flex justify-center items-center text-7xl text-white">
-                        <img class="mx-auto rounded-full w-40 h-40 shadow-lg" src="{{ asset("imagenes/$img.jpg") }}" alt="{{ $name }}">
-                    </div>
+                    <img class="mx-auto rounded-full w-40 h-40 shadow-lg" src="{{ asset('imagenes/Wuajhon.jpg') }}" alt="Wuajhon Zegarra">
                 </div>
                 <div class="mt-20 mb-4 px-8 py-24 text-center space-y-2">
                     <div>
-                        <p class="font-bold">{{ $name }}</p>
+                        <p class="font-bold">Wuajhon Zegarra</p>
                     </div>
-                    <p>Testimonio de {{ $name }}</p>
+                    <p>Variedad de colores y estilos para cualquier ocasión.</p>
                 </div>
             </div>
-            @endforeach
+            
+            <div class="swiper-slide relative border-4 rounded-3xl h-80 w-80 bg-white">
+                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 translate-y-3">
+                    <img class="mx-auto rounded-full w-40 h-40 shadow-lg" src="{{ asset('imagenes/Camilo.jpg') }}" alt="Camilo Villaruel">
+                </div>
+                <div class="mt-20 mb-4 px-8 py-24 text-center space-y-2">
+                    <div>
+                        <p class="font-bold">Camilo Villaruel</p>
+                    </div>
+                    <p>Que buenos productos tienen! Ideal para futbol, super recomendado!</p>
+                </div>
+            </div>
+
+            <div class="swiper-slide relative border-4 rounded-3xl h-80 w-80 bg-white">
+                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 translate-y-3">
+                    <img class="mx-auto rounded-full w-40 h-40 shadow-lg" src="{{ asset('imagenes/Taylor.jpg') }}" alt="Taylor Swift">
+                </div>
+                <div class="mt-20 mb-4 px-8 py-24 text-center space-y-2">
+                    <div>
+                        <p class="font-bold">Taylor Swift</p>
+                    </div>
+                    <p>Que productos que siguen luciendo como nuevos. Increíble durabilidad.</p>
+                </div>
+            </div>
+
+            <div class="swiper-slide relative border-4 rounded-3xl h-80 w-80 bg-white">
+                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 translate-y-3">
+                    <img class="mx-auto rounded-full w-40 h-40 shadow-lg" src="{{ asset('imagenes/Camila.jpg') }}" alt="Camila Soriano">
+                </div>
+                <div class="mt-20 mb-4 px-8 py-24 text-center space-y-2">
+                    <div>
+                        <p class="font-bold">Camila Soriano</p>
+                    </div>
+                    <p>Compra fácil y rápida. Equipo de atención al cliente excepcional.</p>
+                </div>
+            </div>
+
+            <div class="swiper-slide relative border-4 rounded-3xl h-80 w-80 bg-white">
+                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 translate-y-3">
+                    <img class="mx-auto rounded-full w-40 h-40 shadow-lg" src="{{ asset('imagenes/Eladio.png') }}" alt="Eladio Carrión">
+                </div>
+                <div class="mt-20 mb-4 px-8 py-24 text-center space-y-2">
+                    <div>
+                        <p class="font-bold">Eladio Carrión</p>
+                    </div>
+                    <p>Productos duraderos y cómodos. La elección perfecta para cualquier deporte.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

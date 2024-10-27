@@ -46,26 +46,6 @@
                 </ul>      
             </div>
 
-            <div id="toggleButtonModoOscuro" onclick="toggleDarkMode()" class="pointer-events-auto h-6 w-10 rounded-full p-1 ring-1 ring-inset transition duration-200 ease-in-out bg-black ring-black md:order-2">
-                <div id="bolitaBotonModoOscuro" class="h-4 w-4 rounded-full bg-white shadow-sm ring-1 ring-slate-700/10 transition duration-200 ease-in-out"></div>
-            </div>
-
-            <div class="flex items-center md:order-3">
-                <button id="botonidioma" type="button" data-dropdown-toggle="language-dropdown-menu" class="flex items-center font-medium justify-center px-4 py-2 rounded-lg cursor-pointer text-black"> 
-                    <img src="{{ asset('imagenes/flecha.png') }}" alt="">
-                    <span id="current-language">Español</span>
-                </button>
-                <div class="z-50 hidden my-4 text-base list-none bg-gray-600 divide-y divide-gray-100 rounded-lg shadow" id="language-dropdown-menu">
-                  <ul class="py-2 font-medium">
-                    <li><a href="#" onclick="changeLanguage('Español')" class="block px-4 py-2 text-sm text-white hover:bg-gray-100 hover:text-black">Español</a></li>
-                    <li><a href="#" onclick="changeLanguage('English')" class="block px-4 py-2 text-sm text-white hover:bg-gray-100 hover:text-black">English</a></li>
-                    <li><a href="#" onclick="changeLanguage('Portugues')" class="block px-4 py-2 text-sm text-white hover:bg-gray-100 hover:text-black">Portugues</a></li>
-                  </ul>
-                </div>
-                <button data-collapse-toggle="navbar-cta" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden" aria-controls="navbar-cta" aria-expanded="false">
-                    <img src="{{ asset('imagenes/menuhamburguesa.svg') }}" alt="Hamburguesa">
-                </button>
-            </div>
         </div>
     </nav>
     
@@ -75,7 +55,9 @@
         </a>
     </div>
 
-    @yield('contenido')
+    <section id="contenido" class="py-40 transition-colors duration-500 p-10 {{ $sectionClass ?? 'bg-white' }}">
+        @yield('contenido')
+    </section>
 
     <footer id="footer" class="grid grid-cols-2 lg:grid-cols-3 lg:px-20 pt-10 bg-gradient-to-l from-blue-700 via-blue-200 to-blue-700 gap-7 text-white">
         <div class="flex flex-col md:items-center text-center" style="font-family: 'Russo One', cursive;">
