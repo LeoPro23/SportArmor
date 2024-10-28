@@ -14,17 +14,29 @@
             <p class="text-gray-600 mb-4">{{ $producto->descripcion }}</p>
             <p class="text-3xl font-semibold text-blue-600 mb-4">${{ number_format($producto->precio, 2) }}</p>
             
-            <!-- Tallas disponibles -->
-            <h3 class="text-lg font-semibold mb-2">Tallas Disponibles</h3>
-            <div class="flex flex-wrap gap-4 mb-4">
-                @foreach($producto->tallas as $talla)
-                    <span class="border border-gray-300 px-4 py-2 rounded">{{ $talla->nombre }}</span>
-                @endforeach
-            </div>
+            <!-- Formulario para seleccionar talla y cantidad -->
+            <form method="POST" action="{{ route('carrito.add', $producto->id) }}">
+                @csrf
+                
+                <!-- Tallas disponibles -->
+                <h3 class="text-lg font-semibold mb-2">Tallas Disponibles</h3>
+                <select name="talla" class="border border-gray-300 rounded px-4 py-2 mb-4 w-full">
+                    <option value="" disabled selected>Selecciona una talla</option>
+                    @foreach($producto->tallas as $talla)
+                        <option value="{{ $talla->id }}">{{ $talla->talla }}</option>
+                    @endforeach
+                </select>
 
-            <!-- Stock y botón añadir al carrito -->
-            <p class="text-gray-500 mb-4">Stock disponible: {{ $producto->stock }}</p>
-            <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Añadir al carrito</button>
+                <!-- Cantidad -->
+                <label for="cantidad" class="block text-lg font-semibold mb-2">Cantidad</label>
+                <input type="number" name="cantidad" id="cantidad" min="1" max="{{ $producto->stock }}" value="1" class="border border-gray-300 rounded px-4 py-2 mb-4 w-full">
+
+                <!-- Stock disponible -->
+                <p class="text-gray-500 mb-4">Stock disponible: {{ $producto->stock }}</p>
+
+                <!-- Botón añadir al carrito -->
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Añadir al carrito</button>
+            </form>
         </div>
     </div>
 

@@ -22,16 +22,16 @@ class CatalogoController extends Controller
 
     public function show($id)
     {
-        $producto = Producto::with(['subcategoria', 'tallas'])->findOrFail($id);
-
+        $producto = Producto::with('tallas')->findOrFail($id);
+    
         // Obtener productos relacionados de la misma subcategoría
         $relacionados = Producto::where('subcategoria_id', $producto->subcategoria_id)
                                 ->where('id', '!=', $id)
-                                ->take(4) // Puedes ajustar el número de productos relacionados que se muestran
+                                ->take(4)
                                 ->get();
-
+    
         return view('catalogo.detalle_producto', compact('producto', 'relacionados'));
-    }
+    }    
 
     public function catalogo(Request $request)
     {

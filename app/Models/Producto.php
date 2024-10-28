@@ -15,4 +15,11 @@ class Producto extends Model
     {
         return $this->belongsTo(Subcategoria::class);
     }
+
+    // Modelo Producto
+    public function tallas()
+    {
+        return $this->hasManyThrough(Talla::class, Subcategoria::class, 'id', 'subcategoria_id', 'subcategoria_id', 'id');
+    }
+
 }

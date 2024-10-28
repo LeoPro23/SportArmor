@@ -47,6 +47,19 @@
                 </ul>      
             </div>
 
+            
+            <div class="flex items-center justify-between hidden w-full md:flex md:w-auto md:order-2" id="navbar-cta">
+                <ul id="navitems" class="flex flex-col font-semibold p-4 bg-gray-900 rounded-lg md:items-center md:bg-transparent md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0 lg:text-black text-white hover:text-black md:hover:text-black">
+                    <li class="relative">
+                        <a href="{{ url('/carrito') }}" class="block py-2 pl-3 pr-4 rounded-lg hover:bg-black md:hover:bg-transparent">
+                            <i class="fa-solid fa-shopping-cart"></i>
+                            Carrito
+                            
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
         </div>
     </nav>
     
@@ -74,14 +87,14 @@
                 <!-- Mensajes de chat -->
                 <div class="mb-2 flex items-start space-x-2">
                     <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
-                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the chatbot.</p>
+                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">Esta es una respuesta del chatbot.</p>
                 </div>
                 <div class="mb-2 text-right">
-                    <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">Hello</p>
+                    <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">Hola</p>
                 </div>
                 <div class="mb-2 flex items-start space-x-2">
                     <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
-                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is another response from the chatbot.</p>
+                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">Esta es otra respuesta del chatbot.</p>
                 </div>
             </div>
             <div class="p-4 border-t flex">

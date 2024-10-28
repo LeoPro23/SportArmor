@@ -2,6 +2,12 @@
 
 @section('contenido')
 <div class="container mx-auto my-8">
+    @if(session('success'))
+        <div class="bg-green-500 text-white p-4 rounded mb-4 text-center">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <h2 class="text-2xl font-bold mb-6 text-center">Catálogo de Productos</h2>
     
     <!-- Buscador y filtros -->

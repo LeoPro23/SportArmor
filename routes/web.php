@@ -7,6 +7,8 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\TallaController;
 use App\Http\Controllers\CuponController;
 use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\CarritoController;
+use App\Http\Controllers\VentaController;
 
 Route::get('/', function () {
     return view('inicio');
@@ -33,3 +35,14 @@ Route::get('cupones/{cupon}/confirm', [CuponController::class, 'confirm'])->name
 
 Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
 Route::get('/catalogo/{id}', [CatalogoController::class, 'show'])->name('catalogo.show');
+
+// Rutas de carrito
+Route::post('/carrito/agregar/{producto}', [CarritoController::class, 'agregar'])->name('carrito.add');
+Route::get('/carrito', [CarritoController::class, 'verCarrito'])->name('carrito.index');
+Route::patch('/carrito/actualizar/{key}', [CarritoController::class, 'actualizar'])->name('carrito.update');
+Route::delete('/carrito/eliminar/{key}', [CarritoController::class, 'eliminar'])->name('carrito.remove');
+Route::post('/carrito/aplicar-cupon', [CarritoController::class, 'aplicarCupon'])->name('carrito.aplicarCupon');
+Route::post('/carrito/finalizar-compra', [CarritoController::class, 'finalizarCompra'])->name('carrito.finalizarCompra');
+
+Route::get('/ventas', [VentaController::class, 'index'])->name('ventas.index');
+Route::get('/ventas/{id}', [VentaController::class, 'show'])->name('ventas.show');
