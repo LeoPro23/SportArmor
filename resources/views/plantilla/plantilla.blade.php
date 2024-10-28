@@ -28,6 +28,8 @@
     <script src="{{ asset('js/multilenguaje.js') }}"></script>
     <script src="{{ asset('js/carrousel.js') }}"></script>
     <script src="{{ asset('js/modooscuro.js') }}"></script>
+    <!-- Alpine.js para interactividad -->
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 <body style="font-family: 'Poppins', sans-serif;">
     
@@ -85,6 +87,7 @@
                     <a href="{{ route('login') }}" class="text-gray-800 hover:text-gray-600">Iniciar Sesión</a>
                 @endif
             </div>
+
         </div>
     </nav>
     
@@ -98,8 +101,8 @@
     <!-- Ventana de Chat -->
     <div id="chat-container" class="hidden fixed bottom-16 right-4 w-96 z-50">
         <div class="bg-white shadow-md rounded-lg max-w-lg w-full">
+            <!-- Encabezado del chat común para ambos estados -->
             <div class="p-4 border-b bg-blue-500 text-white rounded-t-lg flex items-center space-x-3">
-                <!-- Imagen del bot -->
                 <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-8 h-8 rounded-full">
                 <p class="text-lg font-semibold">Sport Armor Bot</p>
                 <button id="close-chat" class="ml-auto text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400 absolute right-4">
@@ -108,7 +111,12 @@
                     </svg>
                 </button>
             </div>
+
+            @auth
+            <!-- Contenido del chat para usuarios autenticados -->
             <div id="chatbox" class="p-4 h-80 overflow-y-auto">
+                <!-- Aquí irán los mensajes del chat -->
+                <!-- Ejemplo de mensajes -->
                 <!-- Mensajes de chat -->
                 <div class="mb-2 flex items-start space-x-2">
                     <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
@@ -126,8 +134,19 @@
                 <input id="user-input" type="text" placeholder="Escribe un mensaje" class="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <button id="send-button" class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition duration-300">Enviar</button>
             </div>
+            @endauth
+
+            @guest
+            <!-- Contenido para usuarios no autenticados -->
+            <div class="p-4 h-80 flex items-center justify-center">
+                <a href="{{ route('login') }}" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
+                    Iniciar Sesión para usar el chat
+                </a>
+            </div>
+            @endguest
         </div>
     </div>
+
 
     
     @yield('contenido-inicio')

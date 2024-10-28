@@ -1,9 +1,11 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@extends('plantilla.plantilla')
+
+@section('contenido')
+    <div class="py-3">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <h1 class="text-2xl font-semibold text-gray-900">Editar Perfil</h1>
+        </div>
+    </div>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -26,4 +28,5 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+
+@endsection
