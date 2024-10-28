@@ -64,3 +64,5 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::post('/chatbot', [App\Http\Controllers\ChatbotController::class, 'handle'])->middleware('auth');

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sport Armor</title>
 
+    <!-- Agregar CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -134,14 +137,7 @@
                 <!-- Mensajes de chat -->
                 <div class="mb-2 flex items-start space-x-2">
                     <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
-                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">Esta es una respuesta del chatbot.</p>
-                </div>
-                <div class="mb-2 text-right">
-                    <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">Hola</p>
-                </div>
-                <div class="mb-2 flex items-start space-x-2">
-                    <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
-                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">Esta es otra respuesta del chatbot.</p>
+                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">Bienvenido al bot faq de Sport Armor!</p>
                 </div>
             </div>
             <div class="p-4 border-t flex">
@@ -201,6 +197,9 @@
         const chatButton = document.getElementById("chatButton");
         const chatContainer = document.getElementById("chat-container");
         const closeChat = document.getElementById("close-chat");
+        const sendButton = document.getElementById("send-button");
+        const userInput = document.getElementById("user-input");
+        const chatbox = document.getElementById("chatbox");
 
         chatButton.addEventListener("click", () => {
             chatContainer.classList.toggle("hidden");
@@ -209,6 +208,79 @@
         closeChat.addEventListener("click", () => {
             chatContainer.classList.add("hidden");
         });
+
+        @auth
+        sendButton.addEventListener("click", async () => {
+            const message = userInput.value.trim();
+            if (message === "") return;
+
+            // Mostrar el mensaje del usuario en el chat
+            const userMessageDiv = document.createElement("div");
+            userMessageDiv.classList.add("mb-2", "text-right");
+            userMessageDiv.innerHTML = `<p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">${message}</p>`;
+            chatbox.appendChild(userMessageDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+            userInput.value = "";
+
+            // Mostrar indicador de carga
+            const loadingMessageDiv = document.createElement("div");
+            loadingMessageDiv.classList.add("mb-2", "flex", "items-start", "space-x-2");
+            loadingMessageDiv.innerHTML = `
+                <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
+                <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">Escribiendo...</p>
+            `;
+            chatbox.appendChild(loadingMessageDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            // Enviar el mensaje al servidor
+            try {
+                const response = await fetch("{{ url('/chatbot') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                    body: JSON.stringify({ message }),
+                });
+
+                const data = await response.json();
+
+                // Eliminar el indicador de carga
+                chatbox.removeChild(loadingMessageDiv);
+
+                // Mostrar la respuesta del chatbot en el chat
+                const botMessageDiv = document.createElement("div");
+                botMessageDiv.classList.add("mb-2", "flex", "items-start", "space-x-2");
+                botMessageDiv.innerHTML = `
+                    <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
+                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">${data.message}</p>
+                `;
+                chatbox.appendChild(botMessageDiv);
+                chatbox.scrollTop = chatbox.scrollHeight;
+
+            } catch (error) {
+                console.error("Error:", error);
+                // Mostrar mensaje de error
+                chatbox.removeChild(loadingMessageDiv);
+                const errorMessageDiv = document.createElement("div");
+                errorMessageDiv.classList.add("mb-2", "flex", "items-start", "space-x-2");
+                errorMessageDiv.innerHTML = `
+                    <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
+                    <p class="bg-red-200 text-red-700 rounded-lg py-2 px-4 inline-block">Ocurrió un error. Por favor, intenta nuevamente.</p>
+                `;
+                chatbox.appendChild(errorMessageDiv);
+                chatbox.scrollTop = chatbox.scrollHeight;
+            }
+        });
+
+        // Permitir enviar mensajes al presionar Enter
+        userInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendButton.click();
+            }
+        });
+        @endauth
     </script>
 
 </body>
