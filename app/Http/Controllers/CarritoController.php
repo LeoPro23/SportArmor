@@ -158,11 +158,14 @@ class CarritoController extends Controller
         $total = collect($carrito)->sum(fn($item) => $item['precio'] * $item['cantidad']);
         $totalConDescuento = $total - ($total * ($descuento / 100));
 
+        $userId = auth()->check() ? auth()->id() : null;
+
         // Crear la venta
         $venta = Venta::create([
             'fecha_venta' => now(),
             'cupon_id' => session()->get('cupon_aplicado'),
             'total' => $totalConDescuento,
+            'user_id' => $userId,
         ]);
 
         // Crear el detalle de la venta y actualizar el stock de cada producto

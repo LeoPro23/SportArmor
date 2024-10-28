@@ -10,7 +10,7 @@ class Venta extends Model
     use HasFactory;
 
     protected $table = 'ventas';
-    protected $fillable = ['fecha_venta', 'cupon_id', 'total'];
+    protected $fillable = ['fecha_venta', 'cupon_id', 'total', 'user_id'];
 
     public function cupon()
     {
@@ -21,4 +21,10 @@ class Venta extends Model
     {
         return $this->hasMany(DetalleVenta::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    
 }

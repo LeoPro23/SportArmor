@@ -5,6 +5,7 @@
     <h2 class="text-2xl font-bold mb-6 text-center">Detalles de la Venta #{{ $venta->id }}</h2>
     
     <p><strong>Fecha de Venta:</strong> {{ $venta->fecha_venta }}</p>
+    <p><strong>Cliente:</strong> {{ $venta->user ? $venta->user->name : 'N/A' }}</p>
     <p><strong>Cupón:</strong> {{ $venta->cupon ? $venta->cupon->codigo : 'N/A' }}</p>
     <p><strong>Total:</strong> ${{ number_format($venta->total, 2) }}</p>
 

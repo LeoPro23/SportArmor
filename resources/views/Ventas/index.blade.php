@@ -8,6 +8,7 @@
         <thead>
             <tr class="bg-gray-100">
                 <th class="py-2 px-4 border-b">ID</th>
+                <th class="py-2 px-4 border-b">ID Usuario</th>
                 <th class="py-2 px-4 border-b">Fecha de Venta</th>
                 <th class="py-2 px-4 border-b">Cupón</th>
                 <th class="py-2 px-4 border-b">Total</th>
@@ -18,6 +19,7 @@
             @foreach($ventas as $venta)
             <tr>
                 <td class="py-2 px-4 border-b text-center">{{ $venta->id }}</td>
+                <td class="py-2 px-4 border-b text-center">{{ $venta->user ? $venta->user->id : 'N/A' }}</td>
                 <td class="py-2 px-4 border-b text-center">{{ $venta->fecha_venta }}</td>
                 <td class="py-2 px-4 border-b text-center">{{ $venta->cupon ? $venta->cupon->codigo : 'N/A' }}</td>
                 <td class="py-2 px-4 border-b text-center">${{ number_format($venta->total, 2) }}</td>
