@@ -10,29 +10,36 @@ use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\AdminMiddleware;
 
 Route::get('/', function () {
     return view('inicio');
-});
+})->name('inicio');
 
 Route::get('/privacidad', function () {
     return view('privacidad');
 })->name('privacidad');
 
-Route::resource('categorias', CategoriaController::class);
-Route::get('categorias/{id}/confirm', [CategoriaController::class, 'confirm'])->name('categorias.confirm');
-
-Route::resource('subcategorias', SubcategoriaController::class);
-Route::get('subcategorias/{id}/confirm', [SubcategoriaController::class, 'confirm'])->name('subcategorias.confirm');
-
-Route::resource('productos', ProductoController::class);
-Route::get('productos/{id}/confirm', [ProductoController::class, 'confirm'])->name('productos.confirm');
-
-Route::resource('tallas', TallaController::class);
-Route::get('tallas/{talla}/confirm', [TallaController::class, 'confirm'])->name('tallas.confirm');
-
-Route::resource('cupones', CuponController::class);
-Route::get('cupones/{cupon}/confirm', [CuponController::class, 'confirm'])->name('cupones.confirm');
+Route::middleware(['auth', AdminMiddleware::class])->group(function () {
+    Route::resource('categorias', CategoriaController::class);
+    Route::get('categorias/{id}/confirm', [CategoriaController::class, 'confirm'])->name('categorias.confirm');
+    
+    Route::resource('subcategorias', SubcategoriaController::class);
+    Route::get('subcategorias/{id}/confirm', [SubcategoriaController::class, 'confirm'])->name('subcategorias.confirm');
+    
+    Route::resource('productos', ProductoController::class);
+    Route::get('productos/{id}/confirm', [ProductoController::class, 'confirm'])->name('productos.confirm');
+    
+    Route::resource('tallas', TallaController::class);
+    Route::get('tallas/{talla}/confirm', [TallaController::class, 'confirm'])->name('tallas.confirm');
+    
+    Route::resource('cupones', CuponController::class);
+    Route::get('cupones/{cupon}/confirm', [CuponController::class, 'confirm'])->name('cupones.confirm');
+    
+    Route::get('/ventas', [VentaController::class, 'index'])->name('ventas.index');
+    Route::get('/ventas/{id}', [VentaController::class, 'show'])->name('ventas.show');
+    
+});
 
 Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
 Route::get('/catalogo/{id}', [CatalogoController::class, 'show'])->name('catalogo.show');
@@ -44,9 +51,6 @@ Route::patch('/carrito/actualizar/{key}', [CarritoController::class, 'actualizar
 Route::delete('/carrito/eliminar/{key}', [CarritoController::class, 'eliminar'])->name('carrito.remove');
 Route::post('/carrito/aplicar-cupon', [CarritoController::class, 'aplicarCupon'])->name('carrito.aplicarCupon');
 Route::post('/carrito/finalizar-compra', [CarritoController::class, 'finalizarCompra'])->name('carrito.finalizarCompra');
-
-Route::get('/ventas', [VentaController::class, 'index'])->name('ventas.index');
-Route::get('/ventas/{id}', [VentaController::class, 'show'])->name('ventas.show');
 
 
 Route::get('/dashboard', function () {

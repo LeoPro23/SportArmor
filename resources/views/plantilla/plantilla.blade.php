@@ -87,8 +87,22 @@
                     <a href="{{ route('login') }}" class="text-gray-800 hover:text-gray-600">Iniciar Sesión</a>
                 @endif
             </div>
-
         </div>
+        <!-- Opciones de mantenedor para administradores -->
+        @auth
+            @if(Auth::user()->isAdmin())
+            
+                <ul class="flex flex-col font-semibold bg-gray-900 p-4 rounded-lg md:items-center md:bg-transparent mt-2 md:flex-row md:space-x-4 text-center text-white">
+                    <li><a href="{{ route('categorias.index') }}" class="text-gray-800 hover:text-blue-500">Categorías</a></li>
+                    <li><a href="{{ route('subcategorias.index') }}" class="text-gray-800 hover:text-blue-500">Subcategorías</a></li>
+                    <li><a href="{{ route('productos.index') }}" class="text-gray-800 hover:text-blue-500">Productos</a></li>
+                    <li><a href="{{ route('tallas.index') }}" class="text-gray-800 hover:text-blue-500">Tallas</a></li>
+                    <li><a href="{{ route('cupones.index') }}" class="text-gray-800 hover:text-blue-500">Cupones</a></li>
+                    <li><a href="{{ route('ventas.index') }}" class="text-gray-800 hover:text-blue-500">Ventas</a></li>
+                </ul>
+            
+            @endif
+        @endauth
     </nav>
     
     <!-- Botón de Chat -->
