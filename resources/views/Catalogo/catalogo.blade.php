@@ -46,11 +46,11 @@
     <!-- Grid de productos -->
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach($productos as $producto)
-            <div class="border rounded-lg overflow-hidden shadow-md p-4 bg-white dark:bg-gray-800">
+            <div class="border rounded-lg overflow-hidden shadow-md p-4 bg-white">
                 <a href="{{ route('catalogo.show', $producto->id) }}">
                     <img src="{{ asset('imagenes/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="p-8 rounded-t-lg w-full h-40 object-cover mb-4">
                 </a>
-                <h3 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">{{ $producto->nombre }}</h3>
+                <h3 class="text-lg font-semibold tracking-tight text-gray-900">{{ $producto->nombre }}</h3>
                 <div class="flex items-center mt-2.5 mb-5">
                     <!-- Estrellas de calificación -->
                     <div class="flex items-center space-x-1">
@@ -62,7 +62,7 @@
                     <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded ml-3">5.0</span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span class="text-3xl font-bold text-gray-900 dark:text-white">${{ number_format($producto->precio, 2) }}</span>
+                    <span class="text-3xl font-bold text-gray-900">${{ number_format($producto->precio, 2) }}</span>
                     <a href="{{ route('catalogo.show', $producto->id) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
                         Ver más
                     </a>

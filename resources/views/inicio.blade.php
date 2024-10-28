@@ -11,7 +11,7 @@
     </div>
     <div class="flex justify-center items-center absolute bottom-0 w-full">
         <div class="mb-5">
-            <a href="#nosotros"><i class="fa-solid fa-angles-down fa-beat-fade text-3xl text-blue-950 dark:text-white"></i></a>
+            <a href="#nosotros"><i class="fa-solid fa-angles-down fa-beat-fade text-3xl text-blue-950"></i></a>
         </div>
     </div>
 </section>
