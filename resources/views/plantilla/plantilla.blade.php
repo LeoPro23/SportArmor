@@ -31,8 +31,10 @@
     <script src="{{ asset('js/multilenguaje.js') }}"></script>
     <script src="{{ asset('js/carrousel.js') }}"></script>
     <script src="{{ asset('js/modooscuro.js') }}"></script>
+
     <!-- Alpine.js para interactividad -->
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
 </head>
 <body style="font-family: 'Poppins', sans-serif;">
     
@@ -64,12 +66,16 @@
                 </ul>
             </div>
 
-            <!-- Mostrar botones de autenticación -->
             <div class="flex items-center md:order-3">
                 @if (Auth::check())
                     <!-- Dropdown para usuario autenticado con Alpine.js -->
                     <div x-data="{ open: false }" class="relative">
                         <button @click="open = !open" class="flex items-center text-gray-800 hover:text-gray-600">
+                            @if(Auth::user()->profile_image)
+                                <img src="{{ asset('perfil/' . Auth::user()->profile_image) }}" alt="Foto de Perfil" class="w-8 h-8 rounded-full object-cover mr-2">
+                            @else
+                                <img src="{{ asset('perfil/default-profile.png') }}" alt="Foto de Perfil" class="w-8 h-8 rounded-full mr-2">
+                            @endif
                             <span>{{ Auth::user()->name }}</span>
                             <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -94,7 +100,6 @@
         <!-- Opciones de mantenedor para administradores -->
         @auth
             @if(Auth::user()->isAdmin())
-            
                 <ul class="flex flex-col font-semibold bg-gray-900 p-4 rounded-lg md:items-center md:bg-transparent mt-2 md:flex-row md:space-x-4 text-center text-white">
                     <li><a href="{{ route('categorias.index') }}" class="text-gray-800 hover:text-blue-500">Categorías</a></li>
                     <li><a href="{{ route('subcategorias.index') }}" class="text-gray-800 hover:text-blue-500">Subcategorías</a></li>
@@ -102,8 +107,11 @@
                     <li><a href="{{ route('tallas.index') }}" class="text-gray-800 hover:text-blue-500">Tallas</a></li>
                     <li><a href="{{ route('cupones.index') }}" class="text-gray-800 hover:text-blue-500">Cupones</a></li>
                     <li><a href="{{ route('ventas.index') }}" class="text-gray-800 hover:text-blue-500">Ventas</a></li>
+                    <li><a href="{{ route('usuarios.index') }}" class="text-gray-800 hover:text-blue-500">Usuarios</a></li>
+                    @if(Auth::user()->isSuperAdmin())
+                        <!-- Opciones exclusivas para superadministrador -->
+                    @endif
                 </ul>
-            
             @endif
         @endauth
     </nav>

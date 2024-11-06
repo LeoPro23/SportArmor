@@ -11,6 +11,8 @@ use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Controllers\UserController;
+use App\Http\Middleware\SuperAdminMiddleware;
 
 Route::get('/', function () {
     return view('inicio');
@@ -39,6 +41,13 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/ventas', [VentaController::class, 'index'])->name('ventas.index');
     Route::get('/ventas/{id}', [VentaController::class, 'show'])->name('ventas.show');
     
+    Route::resource('usuarios', UserController::class);
+    Route::get('usuarios/{id}/confirm', [UserController::class, 'confirm'])->name('usuarios.confirm');
+    
+});
+
+Route::middleware(['auth', SuperAdminMiddleware::class])->group(function () {
+    // Rutas exclusivas para el superadministrador
 });
 
 Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');

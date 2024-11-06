@@ -1,6 +1,6 @@
 @extends('plantilla.plantilla')
 
-@section('contenido')
+@section('contenido-inicio')
 
 <section id="inicio" class=" bg-[url('recursos/fondo1.png')] bg-cover grid" style="font-family: 'Orbitron', cursive;">
     <div class="container mx-auto lg:px-20 py-20">

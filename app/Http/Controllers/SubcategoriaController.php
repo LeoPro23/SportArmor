@@ -39,8 +39,10 @@ class SubcategoriaController extends Controller
 
     public function edit($id)
     {
+        // enviar categorias
+        $categorias = Categoria::all();
         $subcategoria = Subcategoria::findOrFail($id);
-        return view('subcategorias.edit', compact('subcategoria'));
+        return view('subcategorias.edit', compact('subcategoria','categorias'));
     }
     
     public function update(Request $request, $id)

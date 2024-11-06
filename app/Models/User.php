@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'profile_image',
     ];
 
     /**
@@ -48,12 +50,17 @@ class User extends Authenticatable
 
     public function isAdmin()
     {
-        return $this->role === 'admin';
+        return $this->role === 'admin' || $this->role === 'superadmin';
     }
 
     public function isCliente()
     {
         return $this->role === 'cliente';
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->role === 'superadmin';
     }
 
 }
