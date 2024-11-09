@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use App\Models\Subcategoria;
+use App\Models\Categoria;
+use Illuminate\Validation\Rule;
 
 class ProductoController extends Controller
 {
@@ -16,8 +18,10 @@ class ProductoController extends Controller
 
     public function create()
     {
+        // Obtiene todas las categorías para el select
+        $categorias = Categoria::get();
         $subcategorias = Subcategoria::get();
-        return view('productos.create', compact('subcategorias'));
+        return view('productos.create', compact('subcategorias','categorias'));
     }
 
     public function store(Request $request)
@@ -27,9 +31,15 @@ class ProductoController extends Controller
             'descripcion' => 'nullable|string',
             'precio' => 'required|numeric',
             'stock' => 'required|integer',
-            'subcategoria_id' => 'required|exists:subcategorias,id',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:8192' // Validación de imagen
-        ]);
+            //'categoria_id' => 'required|exists:categorias,id',
+            'subcategoria_id' => [
+                'required',
+                Rule::exists('subcategorias', 'id')->where(function ($query) use ($request) {
+                    return $query->where('categoria_id', $request->categoria_id);
+                }),
+            ],
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:8192'
+        ]);        
     
         $datos = $request->all();
     
@@ -57,9 +67,10 @@ class ProductoController extends Controller
     public function edit($id)
     {
         $producto = Producto::findOrFail($id);
+        $categorias = Categoria::get();
         // Obtiene todas las subcategorías para el select
         $subcategorias = Subcategoria::get();
-        return view('productos.edit', compact('producto', 'subcategorias'));
+        return view('productos.edit', compact('producto', 'subcategorias','categorias'));
     }
 
     public function update(Request $request, $id)
@@ -71,9 +82,15 @@ class ProductoController extends Controller
             'descripcion' => 'nullable|string',
             'precio' => 'required|numeric',
             'stock' => 'required|integer',
-            'subcategoria_id' => 'required|exists:subcategorias,id',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:8192' // Validación de imagen
-        ]);
+            'categoria_id' => 'required|exists:categorias,id',
+            'subcategoria_id' => [
+                'required',
+                Rule::exists('subcategorias', 'id')->where(function ($query) use ($request) {
+                    return $query->where('categoria_id', $request->categoria_id);
+                }),
+            ],
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:8192'
+        ]);        
     
         $datos = $request->all();
     
@@ -94,8 +111,9 @@ class ProductoController extends Controller
         } else {
             unset($datos['imagen']); // No actualices el campo de imagen si no se ha subido ninguna
         }
-    
+        
         $producto->update($datos);
+        
         return redirect()->route('productos.index')->with('success', 'Producto actualizado exitosamente.');
     }    
 
@@ -110,6 +128,12 @@ class ProductoController extends Controller
     {
         $producto = Producto::findOrFail($id);
         return view('productos.confirm', compact('producto'));
+    }
+
+    public function getSubcategorias($categoria_id)
+    {
+        $subcategorias = Subcategoria::where('categoria_id', $categoria_id)->get(['id', 'nombre']);
+        return response()->json($subcategorias);
     }
 
 }

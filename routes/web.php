@@ -31,6 +31,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     
     Route::resource('productos', ProductoController::class);
     Route::get('productos/{id}/confirm', [ProductoController::class, 'confirm'])->name('productos.confirm');
+    Route::get('/get-subcategorias/{categoria_id}', [ProductoController::class, 'getSubcategorias']);
     
     Route::resource('tallas', TallaController::class);
     Route::get('tallas/{talla}/confirm', [TallaController::class, 'confirm'])->name('tallas.confirm');
