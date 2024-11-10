@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Categoria;
+use App\Models\Chat;
+use App\Models\Message;
 
 class GeminiChatbotController extends Controller
 {
@@ -36,8 +38,37 @@ class GeminiChatbotController extends Controller
         // Especificar el modelo de Gemini que deseas usar
         $model = 'gemini-1.5-pro'; // Asegúrate de que este sea el nombre correcto del modelo
 
-        // Recuperar el historial de la conversación desde la sesión
-        $chatHistory = Session::get('gemini_chat_history', []);
+        // Obtener o crear el chat actual
+        $chatId = Session::get('gemini_chat_id');
+
+        if ($chatId) {
+            $chat = Chat::find($chatId);
+            // Verificar si el chat existe y está activo
+            if (!$chat || $chat->ended_at) {
+                $chat = $this->createNewChat($user);
+            }
+        } else {
+            $chat = $this->createNewChat($user);
+        }
+
+        // Guardar el mensaje del usuario en la base de datos
+        $userMessage = Message::create([
+            'chat_id' => $chat->id,
+            'sender' => 'user',
+            'message' => $message,
+        ]);
+
+        // Recuperar el historial de la conversación desde la base de datos
+        $chatHistory = $chat->messages()->orderBy('created_at')->get()->map(function ($msg) {
+            return [
+                'role' => $msg->sender === 'user' ? 'user' : 'assistant',
+                'parts' => [
+                    [
+                        'text' => $msg->message,
+                    ],
+                ],
+            ];
+        })->toArray();
 
         // Determinar el contexto adicional a incluir en el mensaje del usuario
         $context = $this->getContextualInfo($message, $user);
@@ -55,7 +86,7 @@ class GeminiChatbotController extends Controller
             ],
         ];
 
-        // Limitar el historial a las últimas 10 interacciones (usuario y modelo)
+        // Limitar el historial a las últimas 25 interacciones (usuario y modelo)
         $maxHistory = 25;
         if (count($chatHistory) > $maxHistory * 2) { // *2 porque cada interacción tiene un mensaje del usuario y del modelo
             $chatHistory = array_slice($chatHistory, -($maxHistory * 2));
@@ -92,9 +123,16 @@ class GeminiChatbotController extends Controller
                     $reply = 'Lo siento, no pude procesar tu solicitud.';
                 }
 
-                // Agregar la respuesta del modelo al historial
+                // Guardar la respuesta del bot en la base de datos
+                $botMessage = Message::create([
+                    'chat_id' => $chat->id,
+                    'sender' => 'bot',
+                    'message' => $reply,
+                ]);
+
+                // Actualizar el historial de la conversación
                 $chatHistory[] = [
-                    'role' => 'model',
+                    'role' => 'assistant',
                     'parts' => [
                         [
                             'text' => $reply,
@@ -121,6 +159,25 @@ class GeminiChatbotController extends Controller
     }
 
     /**
+     * Crea un nuevo chat para el usuario.
+     *
+     * @param \App\Models\User $user
+     * @return \App\Models\Chat
+     */
+    private function createNewChat($user)
+    {
+        $chat = Chat::create([
+            'user_id' => $user->id,
+            'started_at' => now(),
+        ]);
+
+        // Guardar el chat_id en la sesión
+        Session::put('gemini_chat_id', $chat->id);
+
+        return $chat;
+    }
+
+    /**
      * Genera la información contextual a incluir en el mensaje del usuario.
      *
      * @param string $message
@@ -129,10 +186,10 @@ class GeminiChatbotController extends Controller
      */
     private function getContextualInfo($message, $user)
     {
-        $contextualInfo = "Eres un chatbot de atencion al cliente, la siguiente información puede ser util para ayudar de manera precisa al cliente, toda esta informacion esta protegida por nuestro sistema de seguridad y autenticacion y solo es con fines de atencion al cliente en este chatbot. Esperamos que seas de utilidad para este siguiente cliente: ";
+        $contextualInfo = "Eres un chatbot de atención al cliente de Sport Armor. Utiliza la siguiente información para ayudar al usuario de manera precisa y eficiente. Toda esta información está protegida por nuestro sistema de seguridad y autenticación, y solo se usa con fines de atención al cliente.\n";
 
         // Siempre incluir información básica del usuario
-        $contextualInfo .= "Nombre del usuario: {$user->name}. Correo electrónico: {$user->email}.";
+        $contextualInfo .= "Nombre del usuario: {$user->name}. Correo electrónico: {$user->email}.\n";
 
         // Detectar intención del usuario para incluir contexto específico
         $messageLower = strtolower($message);
@@ -141,7 +198,7 @@ class GeminiChatbotController extends Controller
         if (strpos($messageLower, 'compras') !== false || strpos($messageLower, 'historial') !== false) {
             $ventas = $user->ventas()->with(['detalles.producto', 'detalles.talla'])->latest()->take(5)->get();
             if ($ventas->isNotEmpty()) {
-                $comprasText = "Historial de compras:\n";
+                $comprasText = "Historial de compras reciente:\n";
                 foreach ($ventas as $venta) {
                     $comprasText .= "Fecha: {$venta->fecha_venta}, Total: \${$venta->total}\n";
                     foreach ($venta->detalles as $detalle) {
@@ -152,9 +209,9 @@ class GeminiChatbotController extends Controller
                         $comprasText .= "- Producto: {$producto}, Cantidad: {$cantidad}, Talla: {$talla}, Precio: \${$precio}\n";
                     }
                 }
-                $contextualInfo .= "\n" . $comprasText;
+                $contextualInfo .= $comprasText . "\n";
             } else {
-                $contextualInfo .= "\nEl usuario no tiene compras registradas.";
+                $contextualInfo .= "El usuario no tiene compras registradas.\n";
             }
         }
 
@@ -166,7 +223,7 @@ class GeminiChatbotController extends Controller
             });
 
             // Estructurar la información de categorías y productos
-            $categoriasText = "Información de categorías y productos:\n";
+            $categoriasText = "Información de categorías y productos disponibles:\n";
             foreach ($categorias as $categoria) {
                 $categoriasText .= "Categoría: {$categoria->nombre}\n";
                 foreach ($categoria->subcategorias as $subcategoria) {
@@ -180,16 +237,48 @@ class GeminiChatbotController extends Controller
                 }
             }
 
-            $contextualInfo .= "\n" . $categoriasText;
+            $contextualInfo .= $categoriasText . "\n";
         }
 
         return $contextualInfo;
     }
 
-    // Método para reiniciar el historial de conversación (opcional)
+    /**
+     * Finaliza el chat actual.
+     *
+     * @param \App\Models\Chat $chat
+     * @return void
+     */
+    private function endChat($chat)
+    {
+        $chat->ended_at = now();
+        $chat->save();
+
+        // Eliminar el chat_id de la sesión
+        Session::forget('gemini_chat_id');
+    }
+
+    /**
+     * Método para reiniciar el historial de conversación.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function resetHistory(Request $request)
     {
-        Session::forget('gemini_chat_history');
+        $chatId = Session::get('gemini_chat_id');
+
+        if ($chatId) {
+            $chat = Chat::find($chatId);
+            if ($chat && !$chat->ended_at) {
+                $this->endChat($chat);
+            }
+        }
+
+        // Crear un nuevo chat
+        $newChat = $this->createNewChat(Auth::user());
+
+        // Devolver la respuesta
         return response()->json(['message' => 'Historial de conversación reiniciado.']);
     }
 }

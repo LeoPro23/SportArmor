@@ -14,6 +14,7 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\SuperAdminMiddleware;
 use App\Http\Controllers\GeminiChatbotController;
+use App\Http\Controllers\MessageController;
 
 Route::get('/', function () {
     return view('inicio');
@@ -45,6 +46,10 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     
     Route::resource('usuarios', UserController::class);
     Route::get('usuarios/{id}/confirm', [UserController::class, 'confirm'])->name('usuarios.confirm');
+
+    Route::get('/mensajes', [MessageController::class, 'index'])->name('mensajes.index');
+    Route::get('/mensajes/chats/{userId}', [MessageController::class, 'getChats'])->name('mensajes.getChats');
+    Route::get('/mensajes/chat/{chatId}', [MessageController::class, 'getMessages'])->name('mensajes.getMessages');
     
 });
 

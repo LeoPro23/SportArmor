@@ -7,7 +7,9 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
+use App\Models\Chat; // Importar el modelo Chat
 
 class AuthenticatedSessionController extends Controller
 {
@@ -36,6 +38,20 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // Obtener el usuario autenticado
+        $user = Auth::user();
+
+        // Finalizar el chat activo si existe
+        $chatId = Session::get('gemini_chat_id');
+        if ($chatId) {
+            $chat = Chat::find($chatId);
+            if ($chat && !$chat->ended_at) {
+                $chat->ended_at = now();
+                $chat->save();
+                Session::forget('gemini_chat_id');
+            }
+        }
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

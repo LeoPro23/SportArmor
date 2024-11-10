@@ -108,6 +108,7 @@
                     <li><a href="{{ route('cupones.index') }}" class="text-gray-800 hover:text-blue-500">Cupones</a></li>
                     <li><a href="{{ route('ventas.index') }}" class="text-gray-800 hover:text-blue-500">Ventas</a></li>
                     <li><a href="{{ route('usuarios.index') }}" class="text-gray-800 hover:text-blue-500">Usuarios</a></li>
+                    <li><a href="{{ route('mensajes.index') }}" class="text-gray-800 hover:text-blue-500">Mensajes Chatbot</a></li>
                     @if(Auth::user()->isSuperAdmin())
                         <!-- Opciones exclusivas para superadministrador -->
                     @endif

@@ -65,6 +65,11 @@ class User extends Authenticatable
         return $this->role === 'superadmin';
     }
 
+    public function chats()
+    {
+        return $this->hasMany(Chat::class);
+    }
+
     public function ventas()
     {
         return $this->hasMany(Venta::class);
