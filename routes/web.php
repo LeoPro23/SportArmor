@@ -79,3 +79,4 @@ require __DIR__.'/auth.php';
 Route::post('/chatbot', [App\Http\Controllers\ChatbotController::class, 'handle'])->middleware('auth');
 
 Route::post('/gemini-chatbot', [GeminiChatbotController::class, 'handle'])->middleware('auth');
+Route::post('/gemini-chatbot/reset', [GeminiChatbotController::class, 'resetHistory'])->middleware('auth')->name('gemini-chatbot.reset');

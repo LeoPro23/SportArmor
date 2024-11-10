@@ -200,6 +200,10 @@
                 <input id="user-input-gemini" type="text" placeholder="Escribe un mensaje" class="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <button id="send-button-gemini" class="bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 text-white px-4 py-2 rounded-r-md hover:opacity-80 transition duration-300">Enviar</button>
             </div>
+            <!-- Botón para reiniciar el historial del chatbot de Gemini -->
+            <button id="reset-chat-gemini" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300">
+                Reiniciar Chat
+            </button>
             @endauth
 
             @guest
@@ -424,7 +428,37 @@
                 sendButtonGemini.click();
             }
         });
+
+        document.getElementById("reset-chat-gemini").addEventListener("click", async () => {
+            try {
+                const response = await fetch("{{ url('/gemini-chatbot/reset') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    // Limpiar el chatbox en el frontend
+                    chatboxGemini.innerHTML = `
+                        <div class="mb-2 flex items-start space-x-2">
+                            <img src="{{ asset('imagenes/bot_gemini.webp') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
+                            <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">¡Hola! Soy Gemini Bot. ¿En qué puedo ayudarte?</p>
+                        </div>
+                    `;
+                    alert(data.message);
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Ocurrió un error al reiniciar el chat. Por favor, intenta nuevamente.");
+            }
+        });
         @endauth
+        
     </script>
 
 </body>

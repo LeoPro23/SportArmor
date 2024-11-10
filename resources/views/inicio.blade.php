@@ -21,8 +21,8 @@
         <source src="{{ asset('videos/adidas_video.mp4') }}" type="video/mp4">
     </video>
     <div class="absolute bottom-0 bg-black bg-opacity-50 text-white p-4">
-        <h2 class="lg:text-2xl lg:font-bold">Adidas socio de Sport Armor</h2>
-        <p class="hidden sm:block">Adidas, una marca líder mundial en ropa y accesorios deportivos, se enorgullece de ser socio de Sport Armor. Ofrecemos una amplia gama de productos Adidas para satisfacer todas tus necesidades deportivas. Ven y descubre la calidad y el estilo que Adidas aporta a nuestra tienda.</p>
+        <h2 class="lg:text-2xl lg:font-bold">Adidas, socio oficial de Sport Armor</h2>
+        <p class="hidden sm:block">Marca líder mundial en ropa y accesorios deportivos, se enorgullece de ser socio de Sport Armor. Ofrecemos una amplia gama de productos Adidas para satisfacer todas tus necesidades deportivas. Ven y descubre la calidad y el estilo que Adidas aporta a nuestra tienda.</p>
     </div>
 </div>
 
