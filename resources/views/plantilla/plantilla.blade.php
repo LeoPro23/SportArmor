@@ -165,7 +165,53 @@
         </div>
     </div>
 
+    <!-- Botón del Chatbot de Google Gemini -->
+    <div>
+        <button id="chatButtonGemini" class="bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 rounded-full w-12 h-12 flex items-center justify-center fixed bottom-4 right-20 z-40">
+            <!-- Icono con colores multicolor -->
+            <i class="fa-solid fa-comments fa-2xl" style="color: #fbbc05"></i>
+        </button>
+    </div>
 
+    <!-- Ventana de Chat para Google Gemini -->
+    <div id="chat-container-gemini" class="hidden fixed bottom-16 right-4 w-96 z-50">
+        <div class="bg-white shadow-md rounded-lg max-w-lg w-full">
+            <!-- Encabezado del chat -->
+            <div class="p-4 border-b bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 text-white rounded-t-lg flex items-center space-x-3">
+                <img src="{{ asset('imagenes/bot_gemini.webp') }}" alt="Bot Gemini" class="w-8 h-8 rounded-full">
+                <p class="text-lg font-semibold">Gemini Bot</p>
+                <button id="close-chat-gemini" class="ml-auto text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400 absolute right-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            @auth
+            <!-- Contenido del chat para usuarios autenticados -->
+            <div id="chatbox-gemini" class="p-4 h-80 overflow-y-auto">
+                <!-- Mensaje de bienvenida -->
+                <div class="mb-2 flex items-start space-x-2">
+                    <img src="{{ asset('imagenes/bot_gemini.webp') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
+                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">¡Hola! Soy Gemini Bot. ¿En qué puedo ayudarte?</p>
+                </div>
+            </div>
+            <div class="p-4 border-t flex">
+                <input id="user-input-gemini" type="text" placeholder="Escribe un mensaje" class="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="send-button-gemini" class="bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 text-white px-4 py-2 rounded-r-md hover:opacity-80 transition duration-300">Enviar</button>
+            </div>
+            @endauth
+
+            @guest
+            <!-- Contenido para usuarios no autenticados -->
+            <div class="p-4 h-80 flex items-center justify-center">
+                <a href="{{ route('login') }}" class="bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 text-white px-4 py-2 rounded-md hover:opacity-80 transition duration-300">
+                    Iniciar Sesión para usar el chat
+                </a>
+            </div>
+            @endguest
+        </div>
+    </div>
     
     @yield('contenido-inicio')
 
@@ -208,6 +254,14 @@
         const sendButton = document.getElementById("send-button");
         const userInput = document.getElementById("user-input");
         const chatbox = document.getElementById("chatbox");
+
+        // Variables para el chatbot de Gemini
+        const chatButtonGemini = document.getElementById("chatButtonGemini");
+        const chatContainerGemini = document.getElementById("chat-container-gemini");
+        const closeChatGemini = document.getElementById("close-chat-gemini");
+        const sendButtonGemini = document.getElementById("send-button-gemini");
+        const userInputGemini = document.getElementById("user-input-gemini");
+        const chatboxGemini = document.getElementById("chatbox-gemini");
 
         chatButton.addEventListener("click", () => {
             chatContainer.classList.toggle("hidden");
@@ -286,6 +340,88 @@
             if (event.key === "Enter") {
                 event.preventDefault();
                 sendButton.click();
+            }
+        });
+        @endauth
+
+
+        // Funciones para el chatbot de Gemini
+        chatButtonGemini.addEventListener("click", () => {
+            chatContainerGemini.classList.toggle("hidden");
+        });
+
+        closeChatGemini.addEventListener("click", () => {
+            chatContainerGemini.classList.add("hidden");
+        });
+
+        @auth
+        sendButtonGemini.addEventListener("click", async () => {
+            const message = userInputGemini.value.trim();
+            if (message === "") return;
+
+            // Mostrar el mensaje del usuario en el chat
+            const userMessageDiv = document.createElement("div");
+            userMessageDiv.classList.add("mb-2", "text-right");
+            userMessageDiv.innerHTML = `<p class="bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 text-white rounded-lg py-2 px-4 inline-block">${message}</p>`;
+            chatboxGemini.appendChild(userMessageDiv);
+            chatboxGemini.scrollTop = chatboxGemini.scrollHeight;
+            userInputGemini.value = "";
+
+            // Mostrar indicador de carga
+            const loadingMessageDiv = document.createElement("div");
+            loadingMessageDiv.classList.add("mb-2", "flex", "items-start", "space-x-2");
+            loadingMessageDiv.innerHTML = `
+                <img src="{{ asset('imagenes/bot_gemini.webp') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
+                <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">Escribiendo...</p>
+            `;
+            chatboxGemini.appendChild(loadingMessageDiv);
+            chatboxGemini.scrollTop = chatboxGemini.scrollHeight;
+
+            // Enviar el mensaje al servidor
+            try {
+                const response = await fetch("{{ url('/gemini-chatbot') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                    body: JSON.stringify({ message }),
+                });
+
+                const data = await response.json();
+
+                // Eliminar el indicador de carga
+                chatboxGemini.removeChild(loadingMessageDiv);
+
+                // Mostrar la respuesta del chatbot en el chat
+                const botMessageDiv = document.createElement("div");
+                botMessageDiv.classList.add("mb-2", "flex", "items-start", "space-x-2");
+                botMessageDiv.innerHTML = `
+                    <img src="{{ asset('imagenes/bot_gemini.webp') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
+                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">${data.message}</p>
+                `;
+                chatboxGemini.appendChild(botMessageDiv);
+                chatboxGemini.scrollTop = chatboxGemini.scrollHeight;
+
+            } catch (error) {
+                console.error("Error:", error);
+                // Mostrar mensaje de error
+                chatboxGemini.removeChild(loadingMessageDiv);
+                const errorMessageDiv = document.createElement("div");
+                errorMessageDiv.classList.add("mb-2", "flex", "items-start", "space-x-2");
+                errorMessageDiv.innerHTML = `
+                    <img src="{{ asset('imagenes/bot_gemini.webp') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
+                    <p class="bg-red-200 text-red-700 rounded-lg py-2 px-4 inline-block">Ocurrió un error. Por favor, intenta nuevamente.</p>
+                `;
+                chatboxGemini.appendChild(errorMessageDiv);
+                chatboxGemini.scrollTop = chatboxGemini.scrollHeight;
+            }
+        });
+
+        userInputGemini.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendButtonGemini.click();
             }
         });
         @endauth

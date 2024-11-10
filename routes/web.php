@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\SuperAdminMiddleware;
+use App\Http\Controllers\GeminiChatbotController;
 
 Route::get('/', function () {
     return view('inicio');
@@ -76,3 +77,5 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::post('/chatbot', [App\Http\Controllers\ChatbotController::class, 'handle'])->middleware('auth');
+
+Route::post('/gemini-chatbot', [GeminiChatbotController::class, 'handle'])->middleware('auth');
