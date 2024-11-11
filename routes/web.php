@@ -15,6 +15,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Middleware\SuperAdminMiddleware;
 use App\Http\Controllers\GeminiChatbotController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\PurchaseController;
 
 Route::get('/', function () {
     return view('inicio');
@@ -24,6 +25,7 @@ Route::get('/privacidad', function () {
     return view('privacidad');
 })->name('privacidad');
 
+// Rutas de administrador
 Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::resource('categorias', CategoriaController::class);
     Route::get('categorias/{id}/confirm', [CategoriaController::class, 'confirm'])->name('categorias.confirm');
@@ -53,8 +55,9 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     
 });
 
+// Rutas exclusivas para el superadministrador
 Route::middleware(['auth', SuperAdminMiddleware::class])->group(function () {
-    // Rutas exclusivas para el superadministrador
+
 });
 
 Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
@@ -73,10 +76,14 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Rutas de perfil
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Historial de Compras
+    Route::get('/historial-compras', [PurchaseController::class, 'index'])->name('historial_compras');
 });
 
 require __DIR__.'/auth.php';

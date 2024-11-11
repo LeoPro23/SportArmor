@@ -21,6 +21,7 @@
     <table class="table-auto w-full mt-4">
         <thead>
             <tr>
+                <th class="px-4 py-2">ID</th>
                 <th class="px-4 py-2">Foto</th>
                 <th class="px-4 py-2">Nombre</th>
                 <th class="px-4 py-2">Email</th>
@@ -31,6 +32,7 @@
         <tbody>
             @foreach($users as $user)
             <tr>
+                <td class="border px-4 py-2">{{ $user->id }}</td>
                 <td class="border px-4 py-2">
                     @if($user->profile_image)
                         <img src="{{ asset('perfil/' . $user->profile_image) }}" alt="Foto de Perfil" class="w-12 h-12 rounded-full object-cover">
@@ -58,5 +60,11 @@
             @endforeach
         </tbody>
     </table>
+
+    <!-- Paginación -->
+    <div class="mt-4">
+        {{ $users->links() }}
+    </div>
 </div>
+
 @endsection

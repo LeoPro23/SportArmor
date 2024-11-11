@@ -13,12 +13,12 @@ class UserController extends Controller
     public function index()
     {
         if (auth()->user()->isSuperAdmin()) {
-            $users = User::where('id', '!=', auth()->id())->get();
+            $users = User::where('id', '!=', auth()->id())->paginate(5);
         } else {
             // Excluir al superadministrador de la lista para administradores regulares
             $users = User::where('id', '!=', auth()->id())
                          ->where('role', '!=', 'superadmin')
-                         ->get();
+                         ->paginate(5);
         }
         return view('usuarios.index', compact('users'));
     }    
