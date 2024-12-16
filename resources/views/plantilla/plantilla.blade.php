@@ -82,9 +82,9 @@
                             </svg>
                         </button>
                         <div x-show="open" @click.outside="open = false" class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2">
-                            <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Perfil</a>
-                            <a href="{{ route('historial_compras') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Historial de Compras</a>
-                            <form method="POST" action="{{ route('logout') }}">
+                            <a href="{{ url(route('profile.edit')) }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Perfil</a>
+                            <a href="{{ url(route('historial_compras')) }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Historial de Compras</a>
+                            <form method="POST" action="{{ url(route('logout')) }}">
                                 @csrf
                                 <button type="submit" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-200">
                                     Cerrar Sesión
@@ -94,7 +94,7 @@
                     </div>
                 @else
                     <!-- Mostrar botón de iniciar sesión si no está autenticado -->
-                    <a href="{{ route('login') }}" class="text-gray-800 hover:text-gray-600">Iniciar Sesión</a>
+                    <a href="{{ url(route('login')) }}" class="text-gray-800 hover:text-gray-600">Iniciar Sesión</a>
                 @endif
             </div>
         </div>
@@ -102,14 +102,14 @@
         @auth
             @if(Auth::user()->isAdmin())
                 <ul class="flex flex-col font-semibold bg-gray-900 p-4 rounded-lg md:items-center md:bg-transparent mt-2 md:flex-row md:space-x-4 text-center text-white">
-                    <li><a href="{{ route('categorias.index') }}" class="text-gray-800 hover:text-blue-500">Categorías</a></li>
-                    <li><a href="{{ route('subcategorias.index') }}" class="text-gray-800 hover:text-blue-500">Subcategorías</a></li>
-                    <li><a href="{{ route('productos.index') }}" class="text-gray-800 hover:text-blue-500">Productos</a></li>
-                    <li><a href="{{ route('tallas.index') }}" class="text-gray-800 hover:text-blue-500">Tallas</a></li>
-                    <li><a href="{{ route('cupones.index') }}" class="text-gray-800 hover:text-blue-500">Cupones</a></li>
-                    <li><a href="{{ route('ventas.index') }}" class="text-gray-800 hover:text-blue-500">Ventas</a></li>
-                    <li><a href="{{ route('usuarios.index') }}" class="text-gray-800 hover:text-blue-500">Usuarios</a></li>
-                    <li><a href="{{ route('mensajes.index') }}" class="text-gray-800 hover:text-blue-500">Mensajes Chatbot</a></li>
+                    <li><a href="{{ url(route('categorias.index')) }}" class="text-gray-800 hover:text-blue-500">Categorías</a></li>
+                    <li><a href="{{ url(route('subcategorias.index')) }}" class="text-gray-800 hover:text-blue-500">Subcategorías</a></li>
+                    <li><a href="{{ url(route('productos.index')) }}" class="text-gray-800 hover:text-blue-500">Productos</a></li>
+                    <li><a href="{{ url(route('tallas.index')) }}" class="text-gray-800 hover:text-blue-500">Tallas</a></li>
+                    <li><a href="{{ url(route('cupones.index')) }}" class="text-gray-800 hover:text-blue-500">Cupones</a></li>
+                    <li><a href="{{ url(route('ventas.index')) }}" class="text-gray-800 hover:text-blue-500">Ventas</a></li>
+                    <li><a href="{{ url(route('usuarios.index')) }}" class="text-gray-800 hover:text-blue-500">Usuarios</a></li>
+                    <li><a href="{{ url(route('mensajes.index')) }}" class="text-gray-800 hover:text-blue-500">Mensajes Chatbot</a></li>
                     @if(Auth::user()->isSuperAdmin())
                         <!-- Opciones exclusivas para superadministrador -->
                     @endif
@@ -117,61 +117,11 @@
             @endif
         @endauth
     </nav>
-    
-    <!-- Botón de Chat -->
-    <div>
-        <button id="chatButton" class="bg-white rounded-full w-12 h-12 flex items-center justify-center fixed bottom-4 right-4 z-40">
-            <i class="fa-solid fa-comment-dots fa-2xl" style="color: #2a88e0"></i>
-        </button>
-    </div>
-
-    <!-- Ventana de Chat -->
-    <div id="chat-container" class="hidden fixed bottom-16 right-4 w-96 z-50">
-        <div class="bg-white shadow-md rounded-lg max-w-lg w-full">
-            <!-- Encabezado del chat común para ambos estados -->
-            <div class="p-4 border-b bg-blue-500 text-white rounded-t-lg flex items-center space-x-3">
-                <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-8 h-8 rounded-full">
-                <p class="text-lg font-semibold">Sport Armor Bot</p>
-                <button id="close-chat" class="ml-auto text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400 absolute right-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-
-            @auth
-            <!-- Contenido del chat para usuarios autenticados -->
-            <div id="chatbox" class="p-4 h-80 overflow-y-auto">
-                <!-- Aquí irán los mensajes del chat -->
-                <!-- Ejemplo de mensajes -->
-                <!-- Mensajes de chat -->
-                <div class="mb-2 flex items-start space-x-2">
-                    <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
-                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">Bienvenido al bot faq de Sport Armor!</p>
-                </div>
-            </div>
-            <div class="p-4 border-t flex">
-                <input id="user-input" type="text" placeholder="Escribe un mensaje" class="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button id="send-button" class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition duration-300">Enviar</button>
-            </div>
-            @endauth
-
-            @guest
-            <!-- Contenido para usuarios no autenticados -->
-            <div class="p-4 h-80 flex items-center justify-center">
-                <a href="{{ route('login') }}" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
-                    Iniciar Sesión para usar el chat
-                </a>
-            </div>
-            @endguest
-        </div>
-    </div>
 
     <!-- Botón del Chatbot de Google Gemini -->
     <div>
-        <button id="chatButtonGemini" class="bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 rounded-full w-12 h-12 flex items-center justify-center fixed bottom-4 right-20 z-40">
-            <!-- Icono con colores multicolor -->
-            <i class="fa-solid fa-comments fa-2xl" style="color: #fbbc05"></i>
+        <button id="chatButtonGemini" class="bg-white rounded-full w-12 h-12 flex items-center justify-center fixed bottom-4 right-4 z-40">
+            <i class="fa-solid fa-comment-dots fa-2xl" style="color: #2a88e0"></i>
         </button>
     </div>
 
@@ -179,9 +129,9 @@
     <div id="chat-container-gemini" class="hidden fixed bottom-16 right-4 w-96 z-50">
         <div class="bg-white shadow-md rounded-lg max-w-lg w-full">
             <!-- Encabezado del chat -->
-            <div class="p-4 border-b bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 text-white rounded-t-lg flex items-center space-x-3">
-                <img src="{{ asset('imagenes/bot_gemini.webp') }}" alt="Bot Gemini" class="w-8 h-8 rounded-full">
-                <p class="text-lg font-semibold">Gemini Bot</p>
+            <div class="p-4 border-b bg-blue-500 text-white rounded-t-lg flex items-center space-x-3">
+                <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot Gemini" class="w-8 h-8 rounded-full">
+                <p class="text-lg font-semibold">Sport Armor Bot</p>
                 <button id="close-chat-gemini" class="ml-auto text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400 absolute right-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -194,13 +144,13 @@
             <div id="chatbox-gemini" class="p-4 h-80 overflow-y-auto">
                 <!-- Mensaje de bienvenida -->
                 <div class="mb-2 flex items-start space-x-2">
-                    <img src="{{ asset('imagenes/bot_gemini.webp') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
-                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">¡Hola! Soy Gemini Bot. ¿En qué puedo ayudarte?</p>
+                    <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
+                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">¡Hola! Soy Sport Armor Bot. ¿En qué puedo ayudarte?</p>
                 </div>
             </div>
             <div class="p-4 border-t flex">
                 <input id="user-input-gemini" type="text" placeholder="Escribe un mensaje" class="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button id="send-button-gemini" class="bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 text-white px-4 py-2 rounded-r-md hover:opacity-80 transition duration-300">Enviar</button>
+                <button id="send-button-gemini" class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition duration-300">Enviar</button>
             </div>
             <!-- Botón para reiniciar el historial del chatbot de Gemini -->
             <button id="reset-chat-gemini" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300">
@@ -211,7 +161,7 @@
             @guest
             <!-- Contenido para usuarios no autenticados -->
             <div class="p-4 h-80 flex items-center justify-center">
-                <a href="{{ route('login') }}" class="bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 text-white px-4 py-2 rounded-md hover:opacity-80 transition duration-300">
+                <a href="{{ url(route('login')) }}" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
                     Iniciar Sesión para usar el chat
                 </a>
             </div>
@@ -254,13 +204,6 @@
 
     <!-- Scripts -->
     <script>
-        const chatButton = document.getElementById("chatButton");
-        const chatContainer = document.getElementById("chat-container");
-        const closeChat = document.getElementById("close-chat");
-        const sendButton = document.getElementById("send-button");
-        const userInput = document.getElementById("user-input");
-        const chatbox = document.getElementById("chatbox");
-
         // Variables para el chatbot de Gemini
         const chatButtonGemini = document.getElementById("chatButtonGemini");
         const chatContainerGemini = document.getElementById("chat-container-gemini");
@@ -268,88 +211,6 @@
         const sendButtonGemini = document.getElementById("send-button-gemini");
         const userInputGemini = document.getElementById("user-input-gemini");
         const chatboxGemini = document.getElementById("chatbox-gemini");
-
-        chatButton.addEventListener("click", () => {
-            chatContainer.classList.toggle("hidden");
-        });
-
-        closeChat.addEventListener("click", () => {
-            chatContainer.classList.add("hidden");
-        });
-
-        @auth
-        sendButton.addEventListener("click", async () => {
-            const message = userInput.value.trim();
-            if (message === "") return;
-
-            // Mostrar el mensaje del usuario en el chat
-            const userMessageDiv = document.createElement("div");
-            userMessageDiv.classList.add("mb-2", "text-right");
-            userMessageDiv.innerHTML = `<p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">${message}</p>`;
-            chatbox.appendChild(userMessageDiv);
-            chatbox.scrollTop = chatbox.scrollHeight;
-            userInput.value = "";
-
-            // Mostrar indicador de carga
-            const loadingMessageDiv = document.createElement("div");
-            loadingMessageDiv.classList.add("mb-2", "flex", "items-start", "space-x-2");
-            loadingMessageDiv.innerHTML = `
-                <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
-                <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">Escribiendo...</p>
-            `;
-            chatbox.appendChild(loadingMessageDiv);
-            chatbox.scrollTop = chatbox.scrollHeight;
-
-            // Enviar el mensaje al servidor
-            try {
-                const response = await fetch("{{ url('/chatbot') }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    },
-                    body: JSON.stringify({ message }),
-                });
-
-                const data = await response.json();
-
-                // Eliminar el indicador de carga
-                chatbox.removeChild(loadingMessageDiv);
-
-                // Mostrar la respuesta del chatbot en el chat
-                const botMessageDiv = document.createElement("div");
-                botMessageDiv.classList.add("mb-2", "flex", "items-start", "space-x-2");
-                botMessageDiv.innerHTML = `
-                    <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
-                    <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">${data.message}</p>
-                `;
-                chatbox.appendChild(botMessageDiv);
-                chatbox.scrollTop = chatbox.scrollHeight;
-
-            } catch (error) {
-                console.error("Error:", error);
-                // Mostrar mensaje de error
-                chatbox.removeChild(loadingMessageDiv);
-                const errorMessageDiv = document.createElement("div");
-                errorMessageDiv.classList.add("mb-2", "flex", "items-start", "space-x-2");
-                errorMessageDiv.innerHTML = `
-                    <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot" class="w-6 h-6 rounded-full">
-                    <p class="bg-red-200 text-red-700 rounded-lg py-2 px-4 inline-block">Ocurrió un error. Por favor, intenta nuevamente.</p>
-                `;
-                chatbox.appendChild(errorMessageDiv);
-                chatbox.scrollTop = chatbox.scrollHeight;
-            }
-        });
-
-        // Permitir enviar mensajes al presionar Enter
-        userInput.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                sendButton.click();
-            }
-        });
-        @endauth
-
 
         // Funciones para el chatbot de Gemini
         chatButtonGemini.addEventListener("click", () => {
@@ -368,7 +229,7 @@
             // Mostrar el mensaje del usuario en el chat
             const userMessageDiv = document.createElement("div");
             userMessageDiv.classList.add("mb-2", "text-right");
-            userMessageDiv.innerHTML = `<p class="bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 text-white rounded-lg py-2 px-4 inline-block">${message}</p>`;
+            userMessageDiv.innerHTML = `<p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">${message}</p>`;
             chatboxGemini.appendChild(userMessageDiv);
             chatboxGemini.scrollTop = chatboxGemini.scrollHeight;
             userInputGemini.value = "";
@@ -377,7 +238,7 @@
             const loadingMessageDiv = document.createElement("div");
             loadingMessageDiv.classList.add("mb-2", "flex", "items-start", "space-x-2");
             loadingMessageDiv.innerHTML = `
-                <img src="{{ asset('imagenes/bot_gemini.webp') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
+                <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
                 <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">Escribiendo...</p>
             `;
             chatboxGemini.appendChild(loadingMessageDiv);
@@ -403,7 +264,7 @@
                 const botMessageDiv = document.createElement("div");
                 botMessageDiv.classList.add("mb-2", "flex", "items-start", "space-x-2");
                 botMessageDiv.innerHTML = `
-                    <img src="{{ asset('imagenes/bot_gemini.webp') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
+                    <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
                     <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">${data.message}</p>
                 `;
                 chatboxGemini.appendChild(botMessageDiv);
@@ -416,7 +277,7 @@
                 const errorMessageDiv = document.createElement("div");
                 errorMessageDiv.classList.add("mb-2", "flex", "items-start", "space-x-2");
                 errorMessageDiv.innerHTML = `
-                    <img src="{{ asset('imagenes/bot_gemini.webp') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
+                    <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
                     <p class="bg-red-200 text-red-700 rounded-lg py-2 px-4 inline-block">Ocurrió un error. Por favor, intenta nuevamente.</p>
                 `;
                 chatboxGemini.appendChild(errorMessageDiv);
@@ -446,7 +307,7 @@
                     // Limpiar el chatbox en el frontend
                     chatboxGemini.innerHTML = `
                         <div class="mb-2 flex items-start space-x-2">
-                            <img src="{{ asset('imagenes/bot_gemini.webp') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
+                            <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
                             <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">¡Hola! Soy Gemini Bot. ¿En qué puedo ayudarte?</p>
                         </div>
                     `;

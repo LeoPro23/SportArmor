@@ -52,7 +52,6 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/mensajes', [MessageController::class, 'index'])->name('mensajes.index');
     Route::get('/mensajes/chats/{userId}', [MessageController::class, 'getChats'])->name('mensajes.getChats');
     Route::get('/mensajes/chat/{chatId}', [MessageController::class, 'getMessages'])->name('mensajes.getMessages');
-    
 });
 
 // Rutas exclusivas para el superadministrador
@@ -71,7 +70,6 @@ Route::delete('/carrito/eliminar/{key}', [CarritoController::class, 'eliminar'])
 Route::post('/carrito/aplicar-cupon', [CarritoController::class, 'aplicarCupon'])->name('carrito.aplicarCupon');
 Route::post('/carrito/finalizar-compra', [CarritoController::class, 'finalizarCompra'])->name('carrito.finalizarCompra');
 
-
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -87,8 +85,6 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-Route::post('/chatbot', [App\Http\Controllers\ChatbotController::class, 'handle'])->middleware('auth');
 
 Route::post('/gemini-chatbot', [GeminiChatbotController::class, 'handle'])->middleware('auth');
 Route::post('/gemini-chatbot/reset', [GeminiChatbotController::class, 'resetHistory'])->middleware('auth')->name('gemini-chatbot.reset');

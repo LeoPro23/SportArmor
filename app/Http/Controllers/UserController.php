@@ -10,18 +10,58 @@ use Illuminate\Validation\Rule;
 class UserController extends Controller
 {
     // Mostrar la lista de usuarios
+    /*
     public function index()
     {
         if (auth()->user()->isSuperAdmin()) {
-            $users = User::where('id', '!=', auth()->id())->paginate(5);
+            $users = User::where('id', '!=', auth()->id())->paginate(7);
         } else {
             // Excluir al superadministrador de la lista para administradores regulares
             $users = User::where('id', '!=', auth()->id())
                          ->where('role', '!=', 'superadmin')
-                         ->paginate(5);
+                         ->paginate(7);
         }
         return view('usuarios.index', compact('users'));
-    }    
+    }  
+    */
+    
+    public function index(Request $request)
+    {
+        $query = User::query();
+
+        // Filtrar por ID
+        if ($request->has('search_id') && $request->get('search_id') != '') {
+            $query->where('id', $request->get('search_id'));
+        }
+
+        // Filtrar por Nombre
+        if ($request->has('search_name') && $request->get('search_name') != '') {
+            $query->where('name', 'like', '%' . $request->get('search_name') . '%');
+        }
+
+        // Filtrar por Email
+        if ($request->has('search_email') && $request->get('search_email') != '') {
+            $query->where('email', 'like', '%' . $request->get('search_email') . '%');
+        }
+
+        // Filtrar por Rol
+        if ($request->has('role') && $request->get('role') != '') {
+            $query->where('role', $request->get('role'));
+        }
+
+        // Excluir al usuario autenticado de la lista
+        if (auth()->user()->isSuperAdmin()) {
+            $users = $query->where('id', '!=', auth()->id())->paginate(7);
+        } else {
+            $users = $query->where('id', '!=', auth()->id())
+                ->where('role', '!=', 'superadmin')
+                ->paginate(7);
+        }
+
+        return view('usuarios.index', compact('users'));
+    }
+
+    
 
     // Mostrar formulario para crear un nuevo usuario
     public function create()

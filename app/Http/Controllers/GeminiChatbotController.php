@@ -109,7 +109,8 @@ class GeminiChatbotController extends Controller
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
             ])->withoutVerifying()->post($url, $requestBody);
-
+            //])->post($url, $requestBody);
+            
             // Registrar la respuesta para depuración
             Log::info('Respuesta de Gemini:', ['response' => $response->body()]);
 
