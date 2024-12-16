@@ -16,6 +16,7 @@ use App\Http\Middleware\SuperAdminMiddleware;
 use App\Http\Controllers\GeminiChatbotController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\InteligenciaNegociosController;
 
 Route::get('/', function () {
     return view('inicio');
@@ -52,6 +53,9 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/mensajes', [MessageController::class, 'index'])->name('mensajes.index');
     Route::get('/mensajes/chats/{userId}', [MessageController::class, 'getChats'])->name('mensajes.getChats');
     Route::get('/mensajes/chat/{chatId}', [MessageController::class, 'getMessages'])->name('mensajes.getMessages');
+
+    Route::get('/admin/inteligencia-negocios', [InteligenciaNegociosController::class, 'inteligenciaNegocios'])->name('graficasbi.inteligencia_negocios');
+    Route::get('/admin/charts/chat-valuations', [InteligenciaNegociosController::class, 'chatValuationsData'])->name('graficasbi.chart.chatValuations');
 });
 
 // Rutas exclusivas para el superadministrador
@@ -88,3 +92,4 @@ require __DIR__.'/auth.php';
 
 Route::post('/gemini-chatbot', [GeminiChatbotController::class, 'handle'])->middleware('auth');
 Route::post('/gemini-chatbot/reset', [GeminiChatbotController::class, 'resetHistory'])->middleware('auth')->name('gemini-chatbot.reset');
+Route::post('/gemini-chatbot/valorar', [GeminiChatbotController::class, 'rateChat'])->middleware('auth');

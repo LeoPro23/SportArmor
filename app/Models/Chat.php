@@ -20,4 +20,10 @@ class Chat extends Model
     {
         return $this->hasMany(Message::class);
     }
+
+    public function valoracion()
+    {
+        return $this->belongsTo(Valoracion::class, 'valoracion_id');
+    }
+
 }

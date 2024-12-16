@@ -282,4 +282,48 @@ class GeminiChatbotController extends Controller
         // Devolver la respuesta
         return response()->json(['message' => 'Historial de conversación reiniciado.']);
     }
+
+    public function rateChat(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'No autorizado.'], 401);
+        }
+
+        $valoracion = $request->input('valoracion');
+
+        // Validar la valoración: debe estar entre 1 y 5
+        if (!in_array($valoracion, [1,2,3,4,5])) {
+            return response()->json(['message' => 'Valoración inválida'], 400);
+        }
+
+        // Obtener el chat actual
+        $chatId = Session::get('gemini_chat_id');
+        if (!$chatId) {
+            return response()->json(['message' => 'No hay un chat activo'], 404);
+        }
+
+        $chat = Chat::find($chatId);
+        if (!$chat) {
+            return response()->json(['message' => 'No se encontró el chat'], 404);
+        }
+
+        // Buscar la valoración en la tabla valoraciones
+        $valoracionRecord = \App\Models\Valoracion::where('valor', $valoracion)->first();
+        if (!$valoracionRecord) {
+            return response()->json(['message' => 'No se encontró el registro de la valoración'], 404);
+        }
+
+        // Asignar la valoración al chat y finalizarlo
+        $chat->valoracion_id = $valoracionRecord->id;
+        $chat->ended_at = now();
+        $chat->save();
+
+        // Reiniciar el chat
+        Session::forget('gemini_chat_id');
+        // Opcional: Crear un nuevo chat si así lo deseas:
+        // $newChat = $this->createNewChat($user);
+
+        return response()->json(['message' => 'Valoración guardada y chat finalizado.']);
+    }
 }

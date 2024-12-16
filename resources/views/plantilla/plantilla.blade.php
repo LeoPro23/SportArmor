@@ -110,6 +110,8 @@
                     <li><a href="{{ url(route('ventas.index')) }}" class="text-gray-800 hover:text-blue-500">Ventas</a></li>
                     <li><a href="{{ url(route('usuarios.index')) }}" class="text-gray-800 hover:text-blue-500">Usuarios</a></li>
                     <li><a href="{{ url(route('mensajes.index')) }}" class="text-gray-800 hover:text-blue-500">Mensajes Chatbot</a></li>
+                    <li><a href="{{ url(route('graficasbi.inteligencia_negocios')) }}" class="text-gray-800 hover:text-blue-500">Graficas BI</a></li>
+
                     @if(Auth::user()->isSuperAdmin())
                         <!-- Opciones exclusivas para superadministrador -->
                     @endif
@@ -147,6 +149,19 @@
                     <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
                     <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">¡Hola! Soy Sport Armor Bot. ¿En qué puedo ayudarte?</p>
                 </div>
+            </div>
+            <!-- Contenedor de valoración (inicialmente oculto) -->
+            <div id="rating-container-gemini" class="hidden p-4 border-t items-center">
+                <span class="mr-2">Valora mi atención:</span>
+                <div class="flex space-x-1" id="rating-stars">
+                    <!-- Ejemplo: 5 estrellas -->
+                    <button class="star text-gray-500 hover:text-yellow-500" data-value="1">★</button>
+                    <button class="star text-gray-500 hover:text-yellow-500" data-value="2">★</button>
+                    <button class="star text-gray-500 hover:text-yellow-500" data-value="3">★</button>
+                    <button class="star text-gray-500 hover:text-yellow-500" data-value="4">★</button>
+                    <button class="star text-gray-500 hover:text-yellow-500" data-value="5">★</button>
+                </div>
+                <button id="submit-rating" class="bg-blue-500 text-white px-4 py-2 ml-4 rounded-md hover:bg-blue-600 transition duration-300">Valorar</button>
             </div>
             <div class="p-4 border-t flex">
                 <input id="user-input-gemini" type="text" placeholder="Escribe un mensaje" class="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -211,6 +226,9 @@
         const sendButtonGemini = document.getElementById("send-button-gemini");
         const userInputGemini = document.getElementById("user-input-gemini");
         const chatboxGemini = document.getElementById("chatbox-gemini");
+
+        let userInactivityTimer;
+        let selectedRating = 0; // para almacenar la valoración seleccionada
 
         // Funciones para el chatbot de Gemini
         chatButtonGemini.addEventListener("click", () => {
@@ -283,12 +301,15 @@
                 chatboxGemini.appendChild(errorMessageDiv);
                 chatboxGemini.scrollTop = chatboxGemini.scrollHeight;
             }
+
+            resetInactivityTimer();
         });
 
         userInputGemini.addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
                 sendButtonGemini.click();
+                resetInactivityTimer();
             }
         });
 
@@ -320,9 +341,96 @@
                 alert("Ocurrió un error al reiniciar el chat. Por favor, intenta nuevamente.");
             }
         });
+
+        function resetInactivityTimer() {
+            clearTimeout(userInactivityTimer);
+            userInactivityTimer = setTimeout(() => {
+                // Después de 20 segundos sin interacción del usuario
+                showRatingPrompt();
+            }, 20000); // 20 segundos
+        }
+
+        function showRatingPrompt() {
+            // Mostrar mensaje de verificación y la interfaz de valoración
+            const botMessageDiv = document.createElement("div");
+            botMessageDiv.classList.add("mb-2", "flex", "items-start", "space-x-2");
+            botMessageDiv.innerHTML = `
+                <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
+                <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">¿Sigues ahí? Si ya has terminado, por favor valora mi atención.</p>
+            `;
+            chatboxGemini.appendChild(botMessageDiv);
+            chatboxGemini.scrollTop = chatboxGemini.scrollHeight;
+
+            // Mostrar el contenedor de valoraciones
+            document.getElementById("rating-container-gemini").classList.remove("hidden");
+        }
+
+        // Seleccionar la valoración
+        document.querySelectorAll('#rating-stars .star').forEach(star => {
+            star.addEventListener('click', () => {
+                selectedRating = parseInt(star.getAttribute('data-value'));
+                // Marcar estrellas hasta la seleccionada
+                document.querySelectorAll('#rating-stars .star').forEach(s => {
+                    const val = parseInt(s.getAttribute('data-value'));
+                    if (val <= selectedRating) {
+                        s.classList.remove('text-gray-500');
+                        s.classList.add('text-yellow-500');
+                    } else {
+                        s.classList.remove('text-yellow-500');
+                        s.classList.add('text-gray-500');
+                    }
+                });
+            });
+        });
+
+        // Enviar valoración al backend
+        document.getElementById('submit-rating').addEventListener('click', async () => {
+            if (selectedRating === 0) {
+                alert('Por favor, selecciona una valoración.');
+                return;
+            }
+
+            // Petición AJAX para guardar la valoración
+            try {
+                const response = await fetch("{{ url('/gemini-chatbot/valorar') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                    body: JSON.stringify({ valoracion: selectedRating }),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert("¡Gracias por tu valoración! El chat se reiniciará.");
+                    // Ocultar el contenedor de valoración
+                    document.getElementById("rating-container-gemini").classList.add("hidden");
+                    // Reiniciar el chat
+                    chatboxGemini.innerHTML = `
+                        <div class="mb-2 flex items-start space-x-2">
+                            <img src="{{ asset('imagenes/bot.jpg') }}" alt="Bot Gemini" class="w-6 h-6 rounded-full">
+                            <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">¡Hola! Soy Sport Armor Bot. ¿En qué puedo ayudarte?</p>
+                        </div>
+                    `;
+                    selectedRating = 0;
+                    resetInactivityTimer();
+                } else {
+                    alert('Ocurrió un error al enviar la valoración: ' + data.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Ocurrió un error al enviar la valoración. Por favor, inténtalo de nuevo.");
+            }
+        });
+
         @endauth
         
+        
     </script>
+
+    @yield('scripts')  
+
 
 </body>
 </html>
