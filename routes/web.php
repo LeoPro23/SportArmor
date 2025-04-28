@@ -56,6 +56,8 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
 
     Route::get('/admin/inteligencia-negocios', [InteligenciaNegociosController::class, 'inteligenciaNegocios'])->name('graficasbi.inteligencia_negocios');
     Route::get('/admin/charts/chat-valuations', [InteligenciaNegociosController::class, 'chatValuationsData'])->name('graficasbi.chart.chatValuations');
+    Route::get('/admin/charts/response-times', [InteligenciaNegociosController::class, 'responseTimesData'])->name('graficasbi.chart.responseTimes');
+    Route::get('/admin/charts/conversion-rates', [InteligenciaNegociosController::class, 'conversionRatesData'])->name('graficasbi.chart.conversionRates');
 });
 
 // Rutas exclusivas para el superadministrador

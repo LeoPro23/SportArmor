@@ -16,7 +16,10 @@
         <tbody>
             @foreach ($cupones as $cupon)
             <tr>
-                <td class="border px-4 py-2">{{ $cupon->codigo }}</td>
+                <td class="border px-4 py-4">
+                    <img src="{{ asset('imagenes/cupon.png') }}" alt="Imagen de Cupón" class="w-7 h-4 object-cover">
+                    {{ $cupon->codigo }}
+                </td>
                 <td class="border px-4 py-2">{{ $cupon->descuento }}</td>
                 <td class="border px-4 py-2">{{ $cupon->fecha_expiracion }}</td>
                 <td class="border px-4 py-2">
